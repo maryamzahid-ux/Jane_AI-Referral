@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Card, Button } from './ui';
-import { Upload, FileText, CheckCircle2, Loader2, Brain, Shield, Info, ArrowRight, History, List, AlertCircle } from 'lucide-react';
+import { Upload, FileText, CheckCircle2, Loader2, Brain, Shield, Info, ArrowRight, List, AlertCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { extractTextFromFile, analyzeReferralText, type AnalysisResult } from '../lib/analysis';

@@ -2,7 +2,7 @@ import * as pdfjs from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 import mammoth from 'mammoth';
 import Tesseract from 'tesseract.js';
-import type { Referral, PlacementType } from '../data/mockData';
+import type { PlacementType } from '../data/mockData';
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -68,6 +68,7 @@ async function extractTextFromImage(file: File): Promise<string> {
 
 export interface AnalysisResult {
   patient_name: string;
+  patient_avatar: string;
   date_of_birth: string;
   referral_source: string;
   document_type: string;
@@ -89,6 +90,7 @@ export function analyzeReferralText(text: string, fileName: string): AnalysisRes
   // 1. Snapshot Extraction
   const nameMatch = text.match(/Name:\s*([A-Za-z\s]+)/i) || text.match(/Patient:\s*([A-Za-z\s]+)/i);
   const patient_name = nameMatch ? nameMatch[1].trim() : fileName.split('.')[0].replace(/low priority referral /gi, '').replace(/[-_]/g, ' ');
+  const patient_avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(patient_name)}&background=random&color=fff&size=100`;
 
   const dobMatch = text.match(/DOB:\s*([\d\/\-]+)/i) || text.match(/Birth:\s*([\d\/\-]+)/i);
   const date_of_birth = dobMatch ? dobMatch[1].trim() : 'Unknown';
@@ -233,6 +235,7 @@ export function analyzeReferralText(text: string, fileName: string): AnalysisRes
 
   return {
     patient_name,
+    patient_avatar,
     date_of_birth,
     referral_source: text.includes('Hospital') ? 'Medical Center' : text.includes('School') ? 'School Transition Services' : 'County Services',
     document_type: fileName.includes('IEP') ? 'IEP / Transition Plan' : 'Referral Assessment',

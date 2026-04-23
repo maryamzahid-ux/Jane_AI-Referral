@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Referral, PlacementType } from '../data/mockData';
 import { formatDate, cn } from '../lib/utils';
-import { MoreVertical, ArrowRight, User as UserIcon, Calendar, Building2, MapPin, SearchX, FileText, Zap } from 'lucide-react';
+import { ArrowRight, User as UserIcon, Building2, MapPin, SearchX, FileText, Zap } from 'lucide-react';
 
 interface ReferralTableProps {
   referrals: Referral[];

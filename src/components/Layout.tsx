@@ -3,15 +3,10 @@ import {
   LayoutDashboard, 
   FileUp, 
   ClipboardList, 
-  Settings, 
-  ShieldCheck, 
   Bell, 
   User,
   Search,
-  CheckCircle2,
-  ChevronDown,
   Menu,
-  HelpCircle,
   LogOut,
   Building2
 } from 'lucide-react';
