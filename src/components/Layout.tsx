@@ -6,6 +6,7 @@ import {
   Bell, 
   User,
   Search,
+  CheckCircle2,
   Menu,
   LogOut,
   Building2
