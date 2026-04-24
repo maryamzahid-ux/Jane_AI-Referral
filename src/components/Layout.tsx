@@ -31,9 +31,9 @@ export const Layout: React.FC<LayoutProps> = ({
   onLogout 
 }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Intake Queue', icon: LayoutDashboard },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'upload', label: 'Upload Referral', icon: FileUp },
-    { id: 'referrals', label: 'Care Directory', icon: ClipboardList },
+    { id: 'referrals', label: 'Intake Queue', icon: ClipboardList },
   ];
 
   return (

@@ -29,7 +29,16 @@ interface ReferralDetailsProps {
 export const ReferralDetails: React.FC<ReferralDetailsProps> = ({ referral, onClose, onApprove }) => {
   const [activeTab, setActiveTab] = useState<'analysis' | 'source'>('analysis');
 
+  const [isApproving, setIsApproving] = useState(false);
+
   if (!referral) return null;
+
+  const handleApproveAction = async () => {
+    setIsApproving(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    onApprove(referral.id);
+    setIsApproving(false);
+  };
 
   return (
     <AnimatePresence>
@@ -196,67 +205,82 @@ export const ReferralDetails: React.FC<ReferralDetailsProps> = ({ referral, onCl
                       ))}
                     </div>
                   </Card>
-                </div>
+                </div>                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                   {/* Bottom Row: Rationale and Next Step as separate entities */}
+                   <div className="lg:col-span-8 space-y-8">
+                     {/* Rationale Module */}
+                     <Card className={cn(
+                       "p-10 border-none shadow-soft rounded-[2.5rem] overflow-hidden relative",
+                       referral.urgency_level === 'High' ? "bg-slate-900 text-white" : "bg-white text-slate-900 border border-slate-100"
+                     )}>
+                       <div className="relative z-10 space-y-8">
+                         <div className={cn(
+                           "flex items-center gap-3",
+                           referral.urgency_level === 'High' ? "text-primary" : "text-emerald-600"
+                         )}>
+                           <TrendingUp className="w-6 h-6" />
+                           <h4 className="text-[10px] font-extrabold uppercase tracking-[0.3em]">Operational Rationale</h4>
+                         </div>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                           {referral.placement_rationale.map((line, i) => (
+                             <div key={i} className="flex gap-4 group">
+                                <div className={cn(
+                                  "mt-1.5 w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-bold transition-colors shrink-0",
+                                  referral.urgency_level === 'High' ? "bg-white/10" : "bg-slate-100"
+                                )}>{i+1}</div>
+                                <p className={cn(
+                                  "text-sm font-medium leading-relaxed",
+                                  referral.urgency_level === 'High' ? "text-slate-300" : "text-slate-600"
+                                )}>{line}</p>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     </Card>
 
-                {/* Bottom Row: Rationale, Next Step, Evidence */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                  {/* Rationale Card */}
-                  <Card className={cn(
-                    "lg:col-span-8 p-10 border-none shadow-2xl rounded-[3rem] overflow-hidden relative transition-all duration-700",
-                    referral.urgency_level === 'High' ? "bg-slate-900 text-white" : 
-                    referral.urgency_level === 'Medium' ? "bg-white text-slate-900 border border-slate-100" :
-                    "bg-emerald-50/30 text-slate-900 border border-emerald-100"
-                  )}>
-                    <div className="relative z-10 flex flex-col md:flex-row gap-12">
-                       <div className="flex-1 space-y-8">
-                          <div className={cn(
-                            "flex items-center gap-3",
-                            referral.urgency_level === 'High' ? "text-primary" : "text-emerald-600"
-                          )}>
-                            <TrendingUp className="w-6 h-6" />
-                            <h4 className="text-[10px] font-extrabold uppercase tracking-[0.3em]">Operational Rationale</h4>
-                          </div>
-                          <div className="space-y-5">
-                            {referral.placement_rationale.map((line, i) => (
-                              <div key={i} className="flex gap-4 group">
-                                 <div className={cn(
-                                   "mt-1.5 w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-bold transition-colors",
-                                   referral.urgency_level === 'High' ? "bg-white/10" : "bg-slate-100"
-                                 )}>{i+1}</div>
-                                 <p className={cn(
-                                   "text-lg font-medium leading-relaxed",
-                                   referral.urgency_level === 'High' ? "text-slate-300" : "text-slate-600"
-                                 )}>{line}</p>
-                              </div>
-                            ))}
-                          </div>
+                     {/* Next Step Module (The Action) */}
+                     <Card className={cn(
+                       "p-10 border-2 rounded-[2.5rem] transition-all",
+                       referral.urgency_level === 'High' 
+                         ? "bg-primary/5 border-primary/20 shadow-2xl shadow-primary/5" 
+                         : "bg-blue-50/30 border-blue-100 shadow-xl shadow-blue-50/50"
+                     )}>
+                       <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+                         <div className="space-y-3">
+                           <div className="flex items-center gap-2 mb-2">
+                              <div className={cn(
+                                "w-2 h-2 rounded-full",
+                                referral.urgency_level === 'High' ? "bg-primary animate-pulse" : "bg-blue-500"
+                              )} />
+                              <span className={cn(
+                                "text-[10px] font-extrabold uppercase tracking-[0.2em]",
+                                referral.urgency_level === 'High' ? "text-primary" : "text-blue-600"
+                              )}>Recommended Action</span>
+                           </div>
+                           <p className="text-2xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                             {referral.recommended_next_step}
+                           </p>
+                           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                             Final procedural step for patient enrollment
+                           </p>
+                         </div>
+                         <Button 
+                           onClick={handleApproveAction}
+                           disabled={isApproving}
+                           className={cn(
+                             "h-16 px-14 rounded-2xl text-sm font-extrabold shadow-2xl transition-all hover:scale-[1.02] active:scale-95 flex gap-3 shrink-0",
+                             referral.urgency_level === 'High' 
+                               ? "bg-primary hover:bg-primary/90 text-white shadow-primary/40" 
+                               : "bg-slate-900 hover:bg-slate-800 text-white shadow-slate-300",
+                             isApproving && "opacity-80 cursor-wait"
+                           )}
+                         >
+                           {isApproving ? 'Executing...' : 'Approve Decision'}
+                           {!isApproving && <ArrowRight className="w-5 h-5" />}
+                         </Button>
                        </div>
-                       
-                       <div className="w-full md:w-64 space-y-6 shrink-0">
-                          <div className={cn(
-                            "rounded-3xl p-6 border transition-all",
-                            referral.urgency_level === 'High' ? "bg-white/5 border-white/10" : "bg-white border-slate-100 shadow-sm"
-                          )}>
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-4">Recommended Next Step</span>
-                            <p className={cn(
-                              "text-sm font-bold mb-6 leading-relaxed",
-                              referral.urgency_level === 'High' ? "text-white" : "text-slate-800"
-                            )}>
-                              {referral.recommended_next_step}
-                            </p>
-                            <Button 
-                              onClick={() => onApprove(referral.id)}
-                              className={cn(
-                                "w-full h-12 rounded-xl text-xs font-extrabold shadow-lg transition-all",
-                                referral.urgency_level === 'High' ? "bg-primary hover:bg-primary/90 text-white shadow-primary/20" : "bg-slate-900 hover:bg-slate-800 text-white"
-                              )}
-                            >
-                              Approve Decision
-                            </Button>
-                          </div>
-                       </div>
-                    </div>
-                  </Card>
+                     </Card>
+                   </div>
 
                   {/* Evidence Snippets */}
                   <div className="lg:col-span-4 space-y-6">
@@ -301,32 +325,7 @@ export const ReferralDetails: React.FC<ReferralDetailsProps> = ({ referral, onCl
             )}
           </div>
 
-          {/* Footer Actions */}
-          <div className="bg-white border-t px-8 py-6 flex items-center justify-between shrink-0 shadow-2xl z-10">
-            <Button variant="outline" onClick={onClose} className="h-11 px-8 rounded-xl font-bold border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
-              Discard Changes
-            </Button>
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveTab('source')}
-                className={cn(
-                  "h-11 px-6 rounded-xl font-bold transition-all flex gap-2",
-                  activeTab === 'source' ? "bg-slate-100 text-slate-900 border-slate-300" : "border-primary/20 text-primary hover:bg-primary/5"
-                )}
-              >
-                 <FileSearch className="w-4 h-4" />
-                 Source Documents
-              </Button>
-              <Button 
-                onClick={onClose}
-                className="h-11 px-10 bg-primary text-white rounded-xl shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 font-extrabold transition-all flex gap-3"
-              >
-                 Return to Queue
-                 <ArrowRight className="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
+          {/* Footer Actions Removed as requested */}
         </motion.div>
       </motion.div>
     </AnimatePresence>

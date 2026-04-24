@@ -234,7 +234,7 @@ function App() {
                   <span className="text-[10px] font-bold text-accent uppercase tracking-[0.2em]">CareBridge Operational Portal</span>
                 </div>
                 <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {activeTab === 'dashboard' ? 'Referral & Decision Queue' : 'Care Directory'}
+                  {activeTab === 'dashboard' ? 'Operations Dashboard' : 'Intake Queue'}
                 </h1>
               </div>
               <Button 
