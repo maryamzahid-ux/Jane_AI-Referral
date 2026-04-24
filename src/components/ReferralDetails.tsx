@@ -9,7 +9,6 @@ import {
   MapPin,
   ArrowRight,
   Shield,
-  FileSearch,
   Zap,
   FileText,
   Database,
